@@ -2,6 +2,8 @@ if(process.env.NODE_ENV !== 'production') {
     require('dotenv').config()
 }
 
+var mongoDb = require('mongodb');
+var mongoClient = mongoDb.MongoClient;
 const express = require('express');
 const path = require('path');
 const mongoose = require('mongoose');
@@ -44,6 +46,8 @@ app.use(methodOverride('_method'));
 app.use(express.static(path.join(__dirname, 'public')))
 
 const secret = process.env.SECRET || 'thisshouldbeabettersecret!';
+
+mongoClient.connect(dbUrl, { useNewUrlParser: true, useUnifiedTopology: true })
 
 const store = MongoStore.create({
     mongoUrl: dbUrl,
