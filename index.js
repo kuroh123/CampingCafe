@@ -13,6 +13,7 @@ const flash = require('connect-flash');
 const ExpressError = require('./utils/ExpressError');
 const methodOverride = require('method-override');
 const passport = require('passport');
+const helmet = require('helmet')
 const LocalStrategy = require('passport-local');
 const User = require('./models/user');
 // const { MongoStore } = require('connect-mongo')
@@ -20,8 +21,9 @@ const MongoStore = require('connect-mongo');
 const userRoutes = require('./routes/users');
 const campgroundRoutes = require('./routes/campgrounds');
 const reviewRoutes = require('./routes/reviews');
-
-const dbUrl = process.env.DB_URL || 'mongodb://localhost:27017/yelp-camp';
+// process.env.DB_URL || 
+// const dbUrl ='mongodb://localhost:27017/yelp-camp';
+const dbUrl = process.env.DB_URL;
 mongoose.connect(dbUrl, {
     useNewUrlParser: true,
     useCreateIndex: true,
@@ -74,6 +76,7 @@ const sessionConfig = {
 
 app.use(session(sessionConfig))
 app.use(flash());
+// app.use(helmet({ contentSecurityPolicy: false }));
 
 app.use(passport.initialize());
 app.use(passport.session());
@@ -93,6 +96,10 @@ app.use((req, res, next) => {
 app.use('/', userRoutes);
 app.use('/campgrounds', campgroundRoutes)
 app.use('/campgrounds/:id/reviews', reviewRoutes)
+
+app.get('/', (req, res) => {
+    res.render('home')
+});
 
 
 app.all('*', (req, res, next) => {
